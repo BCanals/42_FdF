@@ -6,13 +6,13 @@
 #    By: bizcru <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/18 17:30:42 by bizcru            #+#    #+#              #
-#    Updated: 2024/12/14 18:36:51 by bcanals-         ###   ########.fr        #
+#    Updated: 2024/12/14 21:47:42 by bcanals-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = fdf
 
-SRC_NAMES = main.c
+SRC_NAMES = main.c colors.c events.c
 SRC_DIR = src
 SRC = $(addprefix $(SRC_DIR)/, $(SRC_NAMES))
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)

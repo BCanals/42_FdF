@@ -6,7 +6,7 @@
 /*   By: bcanals- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 18:05:01 by bcanals-          #+#    #+#             */
-/*   Updated: 2024/12/14 20:06:08 by bcanals-         ###   ########.fr       */
+/*   Updated: 2024/12/14 22:00:56 by bcanals-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	put_circle(t_data *img, t_pos cent, int radius, int color)
 	int top_j;
 	int limit;
 
-	limit = radius*radius - cent.x*cent.x - cent.y*cent.y;
+	limit = radius * radius - cent.x * cent.x - cent.y * cent.y;
 	top_i = cent.x + radius;
 	top_j = cent.y + radius;
 	i = cent.x - radius;
@@ -65,7 +65,7 @@ void	put_circle(t_data *img, t_pos cent, int radius, int color)
 		j = cent.y - radius;
 		while (j <= top_j)
 		{
-			if (i * (i + 2 * cent.x) + j * (j + 2 * cent.y) <= limit)
+			if ((i * (i - 2 *cent.x) + j * (j - 2 * cent.y)) <= limit)
 				my_mlx_pixel_put(img, i, j, color);
 			j++;
 		}
@@ -75,18 +75,25 @@ void	put_circle(t_data *img, t_pos cent, int radius, int color)
 
 int main()
 {
-	void	*mlx;
-	void	*mlx_win;
 	//void	*img;
 	t_data	img;
+	int		color;
+	t_vars	vars;
 
-	mlx = mlx_init();
-	mlx_win = mlx_new_window(mlx, 1920, 1080, "Hello world!");
-	img.img = mlx_new_image(mlx, 1920, 1080);
+	vars.mlx = mlx_init();
+	vars.win = mlx_new_window(vars.mlx, 1920, 1080, "Hello world!");
+	mlx_hook(vars.win, 2, 1L<<0, my_close, &vars);
+	color = 0x00F00FFF;
+	img.img = mlx_new_image(vars.mlx, 1920, 1080);
 	img.addr = mlx_get_data_addr(img.img, &img.bpp, &img.line_len, &img.endian);
-	//my_mlx_pixel_put(&img, 5, 5, 0x00FF0000);
-	put_rectangle(&img, get_pos(500, 500), get_pos(100, 100), 0x0000FF00);
-	put_circle(&img, get_pos(500, 500), 100, 0x00FF0000);
-	mlx_put_image_to_window(mlx, mlx_win, img.img, 0, 0);
-	mlx_loop(mlx);
+	put_circle(&img, get_pos(500, 500), 50, color);
+	mlx_put_image_to_window(vars.mlx, vars.win, img.img, 0, 0);
+	put_circle(&img, get_pos(550, 550), 50, get_opposite(color));
+	mlx_put_image_to_window(vars.mlx, vars.win, img.img, 0, 0);
+	put_circle(&img, get_pos(600, 600), 50, add_shade(0.5, color));
+	mlx_put_image_to_window(vars.mlx, vars.win, img.img, 0, 0);
+	put_circle(&img, get_pos(650, 650), 50, add_shade(1, color));
+	mlx_put_image_to_window(vars.mlx, vars.win, img.img, 0, 0);
+
+	mlx_loop(vars.mlx);
 }
