@@ -6,16 +6,16 @@
 /*   By: bcanals- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 18:21:44 by bcanals-          #+#    #+#             */
-/*   Updated: 2024/12/16 16:15:43 by bcanals-         ###   ########.fr       */
+/*   Updated: 2024/12/16 20:02:20 by bcanals-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #ifndef FDF_H
 # define FDF_H
-# include "../mlx_linux/mlx.h"
-# include "../mlx_linux/mlx_int.h"
-# include "../libft/libft.h"
+# include "../libs/MLX42/include/MLX42/MLX42.h"
+# include "../libs/MLX42/include/MLX42/MLX42_Int.h"
+# include "../libs/libft/libft.h"
 # include <math.h>
 # include <stdio.h>
 # include <sys/types.h>
@@ -37,8 +37,8 @@ typedef struct s_vars
 
 typedef struct s_pos
 {
-	int	x;
-	int	y;
+	unsigned int	x;
+	unsigned int	y;
 }		t_pos;
 
 typedef struct s_all_data
