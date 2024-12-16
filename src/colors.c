@@ -6,7 +6,7 @@
 /*   By: bcanals- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 20:40:56 by bcanals-          #+#    #+#             */
-/*   Updated: 2024/12/14 21:14:07 by bcanals-         ###   ########.fr       */
+/*   Updated: 2024/12/16 10:57:23 by bcanals-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@ int	add_shade(double dist, int color)
 		dist = 0;
 	if (dist > 1)
 		dist = 1;
-	i = 0;
-	while (i < 3)
+	i = 1;
+	while (i < 4)
 		((unsigned char *)&color)[i++] *= (1 - dist);
 	return (color);
 }

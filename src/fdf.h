@@ -6,7 +6,7 @@
 /*   By: bcanals- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 18:21:44 by bcanals-          #+#    #+#             */
-/*   Updated: 2024/12/14 21:59:42 by bcanals-         ###   ########.fr       */
+/*   Updated: 2024/12/16 16:15:43 by bcanals-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 # define FDF_H
 # include "../mlx_linux/mlx.h"
 # include "../mlx_linux/mlx_int.h"
+# include "../libft/libft.h"
 # include <math.h>
 # include <stdio.h>
 # include <sys/types.h>
@@ -40,9 +41,17 @@ typedef struct s_pos
 	int	y;
 }		t_pos;
 
+typedef struct s_all_data
+{
+	t_data	*img;
+	t_pos	*pos;
+	t_vars	*vars;
+}			t_all_data;
+
 int	add_shade(double dist, int color);
 int	get_opposite(int color);
 int my_close(t_vars *vars);
+int	hook(int keycode, t_all_data *all);
 
 #endif
 
