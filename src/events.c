@@ -6,30 +6,32 @@
 /*   By: bcanals- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 21:46:03 by bcanals-          #+#    #+#             */
-/*   Updated: 2024/12/16 16:31:16 by bcanals-         ###   ########.fr       */
+/*   Updated: 2024/12/17 20:20:56 by bizcru           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-int my_close(t_vars *vars)
+int my_close(t_prog *prog)
 {
-	mlx_destroy_window(vars->mlx, vars->win);
+	mlx_terminate(prog->mlx);
 	return(0);
 }
 
-int hook(int keycode, t_all_data *all)
+void hook(mlx_key_data_t keycode, void *void_prog)
 {
-	ft_printf("keycode: %i\n", keycode);
-	if (keycode == 65361)
-		all->pos->x--;
-	else if (keycode == 65363)
-		all->pos->x++;
-	else if (keycode == 65364)
-		all->pos->y++;
-	else if (keycode == 65362)
-		all->pos->y--;
-	else if (keycode == 65307)
-		my_close(all->vars);
-	return (0);
+	t_prog	*prog;
+
+	prog = void_prog;
+	//.ft_printf("keycode: %i\n", keycode);
+	if (keycode.key == MLX_KEY_LEFT && prog->pos->x != 0)
+		prog->pos->x--;
+	else if (keycode.key == MLX_KEY_RIGHT)
+		prog->pos->x++;
+	else if (keycode.key == MLX_KEY_DOWN)
+		prog->pos->y++;
+	else if (keycode.key == MLX_KEY_UP && prog->pos->y != 0)
+		prog->pos->y--;
+	else if (keycode.key == MLX_KEY_ESCAPE)
+		my_close(prog);
 }

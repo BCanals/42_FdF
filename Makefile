@@ -6,7 +6,7 @@
 #    By: bizcru <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/18 17:30:42 by bizcru            #+#    #+#              #
-#    Updated: 2024/12/16 21:01:25 by bcanals-         ###   ########.fr        #
+#    Updated: 2024/12/17 20:19:32 by bizcru           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,12 +19,14 @@ OBJ = $(SRC:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 
 BUILD_DIR = build
 
-LIBFT_DIR = libs/libft
+LIBS_DIR = libs
+LIBFT_DIR = $(LIBS_DIR)/libft
 LIBFT = $(LIBFT_DIR)/libft.a
-LIB_FLAGS = -L$(LIBFT_DIR) -lft libmlx42.a -Iinclude -ldl -lglfw -pthread -lm
+LIBMLX = $(LIBS_DIR)/MLX42/build/libmlx42.a
+LIB_FLAGS = -L$(LIBFT_DIR) -lft $(LIBMLX) -ldl -lglfw -pthread -lm #-Iinclude
 
 HDER = $(SRC_DIR)/fdf.h
-CFLAGS = -Wall -Wextra -Werror -g #-fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address
 CC = cc
 
 END = \033[m

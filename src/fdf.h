@@ -6,7 +6,7 @@
 /*   By: bcanals- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 18:21:44 by bcanals-          #+#    #+#             */
-/*   Updated: 2024/12/16 20:02:20 by bcanals-         ###   ########.fr       */
+/*   Updated: 2024/12/17 19:27:46 by bizcru           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,38 +20,23 @@
 # include <stdio.h>
 # include <sys/types.h>
 
-typedef struct s_data
-{
-	void	*img;
-	char	*addr;
-	int		bpp;
-	int		line_len;
-	int		endian;
-}			t_data;
-
-typedef struct s_vars
-{
-	void	*mlx;
-	void	*win;
-}			t_vars;
-
 typedef struct s_pos
 {
 	unsigned int	x;
 	unsigned int	y;
 }		t_pos;
 
-typedef struct s_all_data
+typedef struct s_program
 {
-	t_data	*img;
-	t_pos	*pos;
-	t_vars	*vars;
-}			t_all_data;
+	mlx_t		*mlx;
+	mlx_image_t	*img;
+	t_pos		*pos;
+}			t_prog;
 
-int	add_shade(double dist, int color);
-int	get_opposite(int color);
-int my_close(t_vars *vars);
-int	hook(int keycode, t_all_data *all);
+int		add_shade(double dist, int color);
+int		get_opposite(int color);
+int		my_close(t_prog *prog);
+void	hook(mlx_key_data_t keycode, void *void_all);
 
 #endif
 

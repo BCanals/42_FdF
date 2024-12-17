@@ -6,24 +6,26 @@
 /*   By: bcanals- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 18:05:01 by bcanals-          #+#    #+#             */
-/*   Updated: 2024/12/16 21:00:50 by bcanals-         ###   ########.fr       */
+/*   Updated: 2024/12/17 21:36:50 by bizcru           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-void	my_mlx_pixel_put(t_data *img, unsigned int x, unsigned int y, int color)
+void	my_mlx_pixel_put(mlx_image_t *img, unsigned int x, unsigned int y, uint32_t color)
 {
-	char	*dst;
-	mlx_image_t	*my_img;
-
-	my_img = (mlx_image_t *)img->img;
-	//if (x * (img->bpp / 8) <= my_img->width && y <= my_img->height)
-	if (x < my_img->width && y < my_img->height)
+	uint8_t	*dst;
+	
+	//printf("x,i: %i,%i ; w-h: %i,%i\n", x, y, img->width, img->height);
+	if (x < img->width && y < img->height && x > 0 && y > 0)
 	{
-		dst = img->addr + (y * img->line_len + x * (img->bpp / 8));
-		*(unsigned int *)dst = color;
+		dst = &img->pixels[(y * img->width + x) * BPP];
+		//printf("dest %p = %x\n", dst, *dst);
+		*(uint32_t *)dst = color;
+		//printf("now  %p = %x\n", dst, *(uint32_t *)dst);
 	}
+
+	getchar();
 }
 
 t_pos	*get_pos(unsigned int x, unsigned int y)
@@ -38,7 +40,7 @@ t_pos	*get_pos(unsigned int x, unsigned int y)
 	return (rtrn);
 }
 
-void	put_rectangle(t_data *img, t_pos pos, t_pos size, int color)
+void	put_rectangle(mlx_image_t *img, t_pos pos, t_pos size, int color)
 {
 	unsigned int	i;
 	unsigned int	j;
@@ -57,7 +59,7 @@ void	put_rectangle(t_data *img, t_pos pos, t_pos size, int color)
 	}
 }
 
-void	put_circle(t_data *img, t_pos *cent, int radius, int color)
+void	put_circle(mlx_image_t *img, t_pos *cent, int radius, int color)
 {
 	unsigned int	i;
 	unsigned int	j;
@@ -68,51 +70,66 @@ void	put_circle(t_data *img, t_pos *cent, int radius, int color)
 	limit = radius * radius - cent->x * cent->x - cent->y * cent->y;
 	top_i = cent->x + radius;
 	top_j = cent->y + radius;
+	//printf("top_j: %i", top_j);
 	i = cent->x - radius;
 	while (i <= top_i)
 	{
-		j = cent->y - radius;
-		while (j <= top_j)
+		if (x > 0)
 		{
-			if ((i * (i - 2 * cent->x) + j * (j - 2 * cent->y)) <= limit)
-				my_mlx_pixel_put(img, i, j, color);
-			j++;
+			j = cent->y - radius;
+			while (j <= top_j)
+			{	
+				//printf("i: %i, j: %i\n", i, j);
+				if ((i * (i - 2 * cent->x) + j * (j - 2 * cent->y)) >= limit)
+					my_mlx_pixel_put(img, i, j, color);
+					//mlx_put_pixel(img, i, j, color);
+				j++;
+			}
 		}
 		i++;
 	}
 }
 
-int	render_next_frame(t_all_data *all)
+void	render_next_frame(void *void_prog)
 {
-	int		color;
-	mlx_image_t	*my_img;
+	uint32_t	color;
+	t_prog 		*prog;
 
-	my_img = (mlx_image_t *)all->img->img;
-	color = 0x00F00FFF;
-	ft_bzero(all->img->addr, (my_img->width + 32) * my_img->height * 4);
-	put_circle(all->img, all->pos, 50, color);
-	mlx_image_to_window(all->vars->mlx, all->img->img, 0, 0);
-	return (0);
+	prog = void_prog;
+	color = 0xFF00FFFF;
+	ft_bzero(prog->img->pixels, prog->img->width * prog->img->height * sizeof(int32_t));
+	put_circle(prog->img, prog->pos, 50, color);
+	mlx_image_to_window(prog->mlx, prog->img, 0, 0);
+	//getchar();
+	return ;
 }
+/*
+int	main(void)
+{
+	mlx_set_setting(MLX_MAXIMIZED, true);
+	mlx_t* mlx = mlx_init(256, 256, "bcanals- pipex", true);
+	if (!mlx)
+		perror("no mlx");
+	mlx_image_t* img = mlx_new_image(mlx, 256, 256);
+	if (!img || (mlx_image_to_window(mlx, img, 0, 0) < 0))
+		perror("no image");
+	mlx_loop(mlx);
+	mlx_terminate(mlx);
+	return (EXIT_SUCCESS);
+}*/
 
 int	main(void)
 {
-	t_data		img;
-	t_vars		vars;
-	t_pos		*pos;
-	t_all_data	all;
+	t_prog	prog;
 
-	vars.mlx = mlx_init(1920, 1080," bcanals- pipex", 1);
-	//mlx_do_key_autorepeaton(vars.mlx);
-	pos = get_pos(500, 500);
-	img.img = mlx_new_image(vars.mlx, 1000, 1000);
-	//img.addr = mlx_get_data_addr(img.img, &img.bpp, &img.line_len, &img.endian);
-	all.img = &img;
-	all.pos = pos;
-	all.vars = &vars;
+	//printf("BPP: %li\n", BPP);
+	prog.mlx = mlx_init(700, 700, "bcanals- pipex", true);
+	prog.pos = get_pos(100, 100);
+	prog.img = mlx_new_image(prog.mlx, 256, 256);
+	mlx_image_to_window(prog.mlx, prog.img, 0,0);
 	// ft_printf("address in main: %p\n", all);
-	mlx_key_hook(vars.win, hook, &all);
-	// mlx_hook(vars.win, 2, 1L<<0, my_close, &vars);
-	mlx_loop_hook(vars.mlx, render_next_frame, &all);
-	mlx_loop(vars.mlx);
+	mlx_key_hook(prog.mlx, hook, &prog);
+	mlx_loop_hook(prog.mlx, *render_next_frame, &prog);
+	mlx_loop(prog.mlx);
+	mlx_terminate(prog.mlx);
 }
