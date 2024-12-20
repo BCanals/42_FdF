@@ -6,7 +6,7 @@
 #    By: bizcru <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/18 17:30:42 by bizcru            #+#    #+#              #
-#    Updated: 2024/12/19 12:11:27 by bcanals-         ###   ########.fr        #
+#    Updated: 2024/12/19 22:09:26 by bizcru           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ BUILD_DIR = build
 LIBS_DIR = libs
 LIBFT_DIR = $(LIBS_DIR)/libft
 LIBFT = $(LIBFT_DIR)/libft.a
-LIBMLX = $(LIBS_DIR)/MLX42/MLX42_build/libmlx42.a
+LIBMLX = $(LIBS_DIR)/MLX42/build/libmlx42.a
 LIB_FLAGS = -L$(LIBFT_DIR) -lft $(LIBMLX) -Iinclude -ldl -lglfw -pthread -lm 
 
 HDER = $(SRC_DIR)/fdf.h

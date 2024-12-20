@@ -6,7 +6,7 @@
 /*   By: bcanals- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 18:21:44 by bcanals-          #+#    #+#             */
-/*   Updated: 2024/12/19 12:15:11 by bcanals-         ###   ########.fr       */
+/*   Updated: 2024/12/20 17:40:29 by bizcru           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,21 +20,24 @@
 # include <stdio.h>
 # include <sys/types.h>
 
+typedef struct s_xy t_xy;
+typedef struct s_xyz t_xyz;
+
 typedef struct s_xy
 {
-	int	x;
-	int	y;
-	int	*n_x;
+	int		x;
+	int		y;
+	t_xy	*n_x;
 	int	*n_y;
 }		t_xy;
 
 typedef struct s_xyz
 {
-	int	x;
-	int y;
-	int	z;
-	int	*n_x;
-	int	*n_y;
+	int		x;
+	int		y;
+	int		z;
+	t_xyz	*n_x;
+	t_xyz	*n_y;
 }		t_xyz;
 
 typedef struct s_3d
@@ -42,20 +45,22 @@ typedef struct s_3d
 	t_xyz	*first;
 	int		*x_size;
 	int		*y_size;
-}
+}			t_3d;
 
 typedef struct s_program
 {
 	mlx_t		*mlx;
 	mlx_image_t	*img;
 	t_xy		*offset;
-	t_xy		*2d_net;
-	t_3d		*3d_net;
+	t_xy		*net_2d;
+	t_3d		*net_3d;
 }			t_prog;
 
 void	my_mlx_pixel_put(mlx_image_t *img, int x, int y, uint32_t color);
-void	put_rectangle(mlx_t *img, t_xy pos, t_xy size, uint32_t color);
-void	put_circle(mlx_t *img, t_xy *cent, int radius, uint32_t color);
+void	put_rectangle(mlx_image_t *img, t_xy *pos, t_xy *size, uint32_t color);
+void	put_circle(mlx_image_t *img, t_xy *cent, int radius, uint32_t color);
+t_xy	*get_xy(int x, int y, t_xy *next_x);
+t_xyz	*get_xyz(int x, int y, int z, t_xyz *next_x);
 int		add_shade(double dist, int color);
 int		get_opposite(int color);
 int		my_close(t_prog *prog);

@@ -6,7 +6,7 @@
 /*   By: bcanals- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 21:46:03 by bcanals-          #+#    #+#             */
-/*   Updated: 2024/12/19 10:54:55 by bcanals-         ###   ########.fr       */
+/*   Updated: 2024/12/19 22:04:23 by bizcru           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,14 @@ void hook(mlx_key_data_t keycode, void *void_prog)
 
 	prog = void_prog;
 	//.ft_printf("keycode: %i\n", keycode);
-	if (keycode.key == MLX_KEY_LEFT)
+	/*if (keycode.key == MLX_KEY_LEFT)
 		prog->pos->x--;
 	else if (keycode.key == MLX_KEY_RIGHT)
 		prog->pos->x++;
 	else if (keycode.key == MLX_KEY_DOWN)
 		prog->pos->y++;
 	else if (keycode.key == MLX_KEY_UP)
-		prog->pos->y--;
-	else if (keycode.key == MLX_KEY_ESCAPE)
+		prog->pos->y--;*/
+	if (keycode.key == MLX_KEY_ESCAPE)
 		my_close(prog);
 }
