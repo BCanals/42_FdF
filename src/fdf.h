@@ -6,7 +6,7 @@
 /*   By: bcanals- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 18:21:44 by bcanals-          #+#    #+#             */
-/*   Updated: 2024/12/20 17:40:29 by bizcru           ###   ########.fr       */
+/*   Updated: 2024/12/29 22:49:01 by bizcru           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,17 +25,27 @@ typedef struct s_xyz t_xyz;
 
 typedef struct s_xy
 {
-	int		x;
-	int		y;
+	union {
+		int		pos[2];
+		struct {
+			int x;
+			int y;
+		};
+	};
 	t_xy	*n_x;
-	int	*n_y;
+	t_xy	*n_y;
 }		t_xy;
 
 typedef struct s_xyz
 {
-	int		x;
-	int		y;
-	int		z;
+	union {
+		int		pos[3];
+		struct {
+			int	x;
+			int	y;
+			int	z;
+		};
+	};
 	t_xyz	*n_x;
 	t_xyz	*n_y;
 }		t_xyz;
@@ -54,6 +64,7 @@ typedef struct s_program
 	t_xy		*offset;
 	t_xy		*net_2d;
 	t_3d		*net_3d;
+	bool		update;
 }			t_prog;
 
 void	my_mlx_pixel_put(mlx_image_t *img, int x, int y, uint32_t color);
