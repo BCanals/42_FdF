@@ -6,7 +6,7 @@
 /*   By: bcanals- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 18:21:44 by bcanals-          #+#    #+#             */
-/*   Updated: 2024/12/29 22:49:01 by bizcru           ###   ########.fr       */
+/*   Updated: 2025/01/09 18:46:52 by bizcru           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,11 +70,12 @@ typedef struct s_program
 void	my_mlx_pixel_put(mlx_image_t *img, int x, int y, uint32_t color);
 void	put_rectangle(mlx_image_t *img, t_xy *pos, t_xy *size, uint32_t color);
 void	put_circle(mlx_image_t *img, t_xy *cent, int radius, uint32_t color);
-t_xy	*get_xy(int x, int y, t_xy *next_x);
+t_xy	*get_xy(int x, int y, t_xy *next_x, t_xy *next_y);
 t_xyz	*get_xyz(int x, int y, int z, t_xyz *next_x);
 int		add_shade(double dist, int color);
 int		get_opposite(int color);
 int		my_close(t_prog *prog);
 void	hook(mlx_key_data_t keycode, void *void_all);
+int		load_map(t_prog *prog, char *path);
 
 #endif

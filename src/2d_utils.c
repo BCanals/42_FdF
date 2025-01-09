@@ -6,13 +6,13 @@
 /*   By: bcanals- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/19 11:51:23 by bcanals-          #+#    #+#             */
-/*   Updated: 2024/12/29 22:35:47 by bizcru           ###   ########.fr       */
+/*   Updated: 2025/01/03 12:08:47 by bizcru           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-t_xy	*get_xy(int x, int y, t_xy *next_x)
+t_xy	*get_xy(int x, int y, t_xy *next_x, t_xy *next_y)
 {
 	t_xy	*rtrn;
 
@@ -22,7 +22,7 @@ t_xy	*get_xy(int x, int y, t_xy *next_x)
 	rtrn->x = x;
 	rtrn->y = y;
 	rtrn->n_x = next_x;
-	rtrn->n_y = NULL;
+	rtrn->n_y = next_y;
 	return (rtrn);
 }
 

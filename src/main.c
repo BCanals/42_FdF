@@ -6,7 +6,7 @@
 /*   By: bcanals- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 18:05:01 by bcanals-          #+#    #+#             */
-/*   Updated: 2024/12/29 23:12:31 by bizcru           ###   ########.fr       */
+/*   Updated: 2025/01/09 18:52:46 by bizcru           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,8 @@ int	abs(int i)
 	return (-i);
 }
 
-void	draw_line(t_xy *ini, uint32_t color, mlx_image_t *img)
+void	draw_line(t_xy *ini, t_xy *end, uint32_t color, mlx_image_t *img)
 {
-	t_xy	*end;
 	int		dx;
 	int		dy;
 	int		sx;
@@ -30,8 +29,9 @@ void	draw_line(t_xy *ini, uint32_t color, mlx_image_t *img)
 	int		y;
 	int		error;
 	int		e2;
-
-	end = ini->n_x;
+	
+	if (!ini || !end)
+		return ;
 	dx = abs(end->x - ini->x);
 	dy = 0 - abs(end->y - ini->y);
 	//printf("dx = %i, dy = %i\n", dx, dy);
@@ -85,6 +85,7 @@ void	render_next_frame(void *void_prog)
 	uint32_t	color;
 	t_prog 		*prog;
 	t_xy		*ini;
+	t_xy		*paint;
 	
 	prog = void_prog;
 	color = 0xFF00FFFF;
@@ -92,11 +93,16 @@ void	render_next_frame(void *void_prog)
 	{
 		ft_bzero(prog->img->pixels, prog->img->width * prog->img->height * sizeof(int32_t));
 		ini = prog->net_2d;
-		while (ini->n_x)
+		while (ini)
 		{
-			//put_circle(prog->img, get_xy(350, 350, NULL), 50, 0xFF00FFFF);
-			draw_line(ini, color, prog->img);
-			ini = ini->n_x;
+			paint = ini;
+			while (paint)
+			{	//put_circle(prog->img, get_xy(350, 350, NULL), 50, 0xFF00FFFF);
+				draw_line(paint, paint->n_x, color, prog->img);
+				draw_line(paint, paint->n_y, color, prog->img);
+				paint = paint->n_x;
+			}
+			ini = ini->n_y;
 		}
 		mlx_image_to_window(prog->mlx, prog->img, 0, 0);
 		//getchar();
@@ -107,19 +113,32 @@ void	render_next_frame(void *void_prog)
 
 // TO-DO: in general, see if it makes sense to set a more specific int type such as int32_t
 
-int	main(void)
+int	main(int argc, char **argv)
 {
 	t_prog	prog;
+	/*
 	t_xy	*start;
 	t_xy	*end;
 	t_xy	*mid;
-	t_xy	*starty2;
-	t_xy	*endy2;
+	t_xy	*starty;
+	t_xy	*midy;
+	t_xy	*endy;
 
-	end = get_xy(300, 200, NULL);
-	mid = get_xy(250, 250, end);
-	start = get_xy(200, 200, mid);
+	endy = get_xy(300, 250, NULL, NULL);
+	midy = get_xy(250, 250, endy, NULL);
+	starty = get_xy(200, 250, midy, NULL);
+	end = get_xy(300, 200, NULL, endy);
+	mid = get_xy(250, 200, end, midy);
+	start = get_xy(200, 200, mid, starty);
 	prog.net_2d = start;
+	*/
+	if (argc != 2)
+	{
+		ft_printf("Usage: ./fdf file_path\n");
+		return (0);
+	}
+	if (load_map(&prog, argv[1]) == -1)
+		return 0;
 	prog.mlx = mlx_init(700, 700, "bcanals- fdf", true);
 	prog.img = mlx_new_image(prog.mlx, 700, 700);
 	prog.update = true;
