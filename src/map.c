@@ -6,89 +6,41 @@
 /*   By: bizcru <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 17:48:25 by bizcru            #+#    #+#             */
-/*   Updated: 2025/01/10 11:00:07 by bcanals-         ###   ########.fr       */
+/*   Updated: 2025/01/10 17:40:13 by bcanals-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
-/*
-static int do_load(t_prog *prog)
-{
-	t_xy	*start;
-	t_xy	*end;
-	t_xy	*mid;
-	t_xy	*starty;
-	t_xy	*midy;
-	t_xy	*endy;
 
-	endy = get_xy(300, 250, NULL, NULL);
-	midy = get_xy(250, 250, endy, NULL);
-	starty = get_xy(200, 250, midy, NULL);
-	end = get_xy(300, 200, NULL, endy);
-	mid = get_xy(250, 200, end, midy);
-	start = get_xy(200, 200, mid, starty);
-	prog->net_2d = start;
-	return (1);
-}*/
-
-void points_clean_up(t_xy *start)
-{
-	t_xy	*next;
-	t_xy	*next_line;
-
-	next_line = start->n_y;
-	while (start)
-	{
-		while (start)
-		{
-			next = start->n_x;
-			free(start);
-			start = next;
-		}
-		start = next_line;
-		next_line = start->n_y;
-	}
-}
-
-static int	split_count(char **split)
-{
-	int	i;
-
-	i = 0;
-	while (split[i])
-		i++;
-	return (i);
-}
-
-static void	do_load(t_prog *prog, fd)
+static void	do_load(t_prog *prog, int fd, int size)
 {
 	char	*line;
 	char	**split;
 	t_xyz	*prev_x;
 	t_xyz	*prev_y;
-	int		x;
-	int		y;
-	
-	x = 0;
-	y = 0;
+	int		c[2];
+
+	c[1] = -1;
 	line = get_next_line(fd);
 	while (line)
 	{
+		load_c(c, size);
 		prev_x = NULL;
-		split = ft_split(line);
-		while (split[++x]);
-		while (--x >= 0)
-			prev_x = get_xyz(x, y, ft_atoi(split[x]), prev_x);
-		if (!prog->net_3d)
-			prog->net_3d = prev_x;
+		split = ft_split(line, ' ');
+		while (--(c[0]) >= 0)
+			prev_x = get_xyz(c[0], c[1], ft_atoi(split[c[0]]), prev_x);
+		if (!prog->net)
+			prog->net = prev_x;
 		else
 			prev_y->n_y = prev_x;
 		prev_y = prev_x;
+		ft_free_array(split);
+		free(line);
 		line = get_next_line(fd);
 	}
 }
 
-static int check_file(fd)
+static int	check_file(int fd)
 {
 	char	*line;
 	char	**split;
@@ -96,12 +48,13 @@ static int check_file(fd)
 	int		this_size;
 
 	line = get_next_line(fd);
-	if (!line)
-		return (-1);
+	size = 0;
 	while (line)
 	{
-		split = ft_split(line);
+		split = ft_split(line, ' ');
 		this_size = split_count(split);
+		if (size == 0)
+			size = this_size;
 		free(line);
 		ft_free_array(split);
 		if (this_size != size)
@@ -109,31 +62,78 @@ static int check_file(fd)
 			ft_putstr_fd("the file is not in the correct format\n", 2);
 			return (-1);
 		}
-		size = this_size;
 		line = get_next_line(fd);
 	}
-	return (0);
+	return (size);
 }
 
-int load_map(t_prog *prog, char *path)
+static void	link_y(t_xyz *ini)
 {
-	int	fd;
+	t_xyz	*prev;
+	t_xyz	*next;
+
+	next = ini->n_y;
+	while (next)
+	{
+		prev = ini;
+		while (prev)
+		{
+			prev->n_y = next;
+			prev = prev->n_x;
+			next = next->n_x;
+		}
+		ini = ini->n_y;
+		next = ini->n_y;
+	}
+}
+
+static t_limits	*project(t_xyz *ini)
+{
+	t_xyz		*p;
+	t_limits	*l;
+
+	l = init_limits();
+	if (!l)
+		return (NULL);
+	while (ini)
+	{
+		p = ini;
+		while (p)
+		{
+			p->proj_x = (p->x * 9 - p->y * 9) * cos(M_PI / 6);
+			p->proj_y = (p->x * 9 + p->y * 9) * sin(M_PI / 6) - p->z * 9;
+			update_limits(p, l);
+			p = p->n_x;
+		}
+		ini = ini->n_y;
+	}
+	return (l);
+}
+
+t_limits	*load_map(t_prog *prog, char *path)
+{
+	int			fd;
+	int			size;
+	t_limits	*l;
 
 	fd = open(path, O_RDONLY);
 	if (fd == -1)
 	{
 		perror("error opening the file");
-		return (-1);
+		return (NULL);
 	}
-	if (check_file(prog, fd) == -1)
-		return (-1);
+	size = check_file(fd);
+	if (size == -1)
+		return (NULL);
 	close(fd);
+	fd = open(path, O_RDONLY);
 	if (fd == -1)
 	{
 		perror("error opening the file");
-		return (-1);
+		return (NULL);
 	}
-	do_load(prog, fd);
-	link_y(prog
-	return (0);
+	do_load(prog, fd, size);
+	link_y(prog->net);
+	l = project(prog->net);
+	return (l);
 }

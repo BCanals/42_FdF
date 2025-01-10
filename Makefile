@@ -6,13 +6,13 @@
 #    By: bizcru <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/18 17:30:42 by bizcru            #+#    #+#              #
-#    Updated: 2025/01/09 17:48:09 by bizcru           ###   ########.fr        #
+#    Updated: 2025/01/10 16:27:49 by bcanals-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = fdf
 
-SRC_NAMES = main.c colors.c events.c 2d_utils.c draw_utils.c map.c
+SRC_NAMES = main.c map.c utils.c utils2.c
 SRC_DIR = src
 SRC = $(addprefix $(SRC_DIR)/, $(SRC_NAMES))
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
@@ -22,7 +22,7 @@ BUILD_DIR = build
 LIBS_DIR = libs
 LIBFT_DIR = $(LIBS_DIR)/libft
 LIBFT = $(LIBFT_DIR)/libft.a
-LIBMLX = $(LIBS_DIR)/MLX42/build/libmlx42.a
+LIBMLX = $(LIBS_DIR)/MLX42/MLX42_build/libmlx42.a
 LIB_FLAGS = -L$(LIBFT_DIR) -lft $(LIBMLX) -Iinclude -ldl -lglfw -pthread -lm 
 
 HDER = $(SRC_DIR)/fdf.h

@@ -1,4 +1,4 @@
-//* ************************************************************************** */
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
@@ -6,7 +6,7 @@
 /*   By: bcanals- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 18:05:01 by bcanals-          #+#    #+#             */
-/*   Updated: 2025/01/09 18:52:46 by bizcru           ###   ########.fr       */
+/*   Updated: 2025/01/10 17:35:06 by bcanals-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,133 +19,94 @@ int	abs(int i)
 	return (-i);
 }
 
-void	draw_line(t_xy *ini, t_xy *end, uint32_t color, mlx_image_t *img)
+static void	load_vars(int v[3][2], t_xyz *ini, t_xyz *end)
 {
-	int		dx;
-	int		dy;
-	int		sx;
-	int		sy;
-	int		x;
-	int		y;
-	int		error;
-	int		e2;
-	
+	v[0][0] = abs(end->proj_x - ini->proj_x);
+	v[0][1] = 0 - abs(end->proj_y - ini->proj_y);
+	v[2][0] = ini->proj_x;
+	v[2][1] = ini->proj_y;
+	v[1][0] = 1;
+	v[1][1] = 1;
+	if (v[2][0] >= end->proj_x)
+		v[1][0] = v[1][0] * -1;
+	if (v[2][1] >= end->proj_y)
+		v[1][1] = v[1][1] * -1;
+}
+
+static void	draw_line(t_xyz *ini, t_xyz *end, uint32_t color, mlx_image_t *img)
+{
+	int	v[3][2];
+	int	error;
+	int	e2;
+
 	if (!ini || !end)
 		return ;
-	dx = abs(end->x - ini->x);
-	dy = 0 - abs(end->y - ini->y);
-	//printf("dx = %i, dy = %i\n", dx, dy);
-	x = ini->x;
-	y = ini->y;
-	sx = 1;
-	sy = 1;
-	error = dx + dy;
-	//printf("error: %i\n", error);
-	if (x >= end->x)
-		sx = sx * -1;
-	if (y >= end->y)
-		sy = sy * -1;
-
-	//printf("start x = %i,  end X = %i", ini->x, end->x);
+	load_vars(v, ini, end);
+	error = v[0][0] + v[0][1];
 	while (1)
 	{
-		//printf("printing %i, %i\n", x, y);
-		my_mlx_pixel_put(img, x, y, color);
-		//put_circle(prog->img, get_xy(x, y, NULL), 5, color);
-		if (x == end->x && y == end->y)
+		my_mlx_pixel_put(img, v[2][0], v[2][1], color);
+		if (v[2][0] == end->proj_x && v[2][1] == end->proj_y)
 			break ;
 		e2 = 2 * error;
-		//printf("e2 = %i\n", e2);
-		//getchar();
-		if (e2 >= dy)
+		if (e2 >= v[0][1])
 		{
-			error += dy;
-			//printf("error = %i\n", error);
-			//getchar();
-			x += sx;
-			//printf("x = %i\n", x);
-			//getchar();
+			error += v[0][1];
+			v[2][0] += v[1][0];
 		}
-		if (e2 <= dx)
+		if (e2 <= v[0][0])
 		{
-			error += dx;
-			//printf("error = %i\n", error);
-			//getchar();
-			y += sy;
-			//printf("y = %i\n", y);
-			//getchar();
+			error += v[0][0];
+			v[2][1] += v[1][1];
 		}
 	}
-	//getchar();
 }
 
-
-void	render_next_frame(void *void_prog)
+static void	draw_map(mlx_image_t *img, t_xyz *p)
 {
-	uint32_t	color;
-	t_prog 		*prog;
-	t_xy		*ini;
-	t_xy		*paint;
-	
-	prog = void_prog;
-	color = 0xFF00FFFF;
-	if (prog->update == true)
-	{
-		ft_bzero(prog->img->pixels, prog->img->width * prog->img->height * sizeof(int32_t));
-		ini = prog->net_2d;
-		while (ini)
-		{
-			paint = ini;
-			while (paint)
-			{	//put_circle(prog->img, get_xy(350, 350, NULL), 50, 0xFF00FFFF);
-				draw_line(paint, paint->n_x, color, prog->img);
-				draw_line(paint, paint->n_y, color, prog->img);
-				paint = paint->n_x;
-			}
-			ini = ini->n_y;
-		}
-		mlx_image_to_window(prog->mlx, prog->img, 0, 0);
-		//getchar();
-		prog->update = false;
-	}
-	return ;
-}
+	t_xyz	*ini_y;
 
-// TO-DO: in general, see if it makes sense to set a more specific int type such as int32_t
+	ini_y = p;
+	while (p)
+	{
+		while (p)
+		{
+			if (p->n_x)
+				draw_line(p, p->n_x, 0xFF00FFFF, img);
+			if (p->n_y)
+				draw_line(p, p->n_y, 0xFF00FFFF, img);
+			p = p->n_x;
+		}
+		ini_y = ini_y->n_y;
+		p = ini_y;
+	}
+}
 
 int	main(int argc, char **argv)
 {
-	t_prog	prog;
-	/*
-	t_xy	*start;
-	t_xy	*end;
-	t_xy	*mid;
-	t_xy	*starty;
-	t_xy	*midy;
-	t_xy	*endy;
+	t_prog		prog;
+	t_limits	*l;
 
-	endy = get_xy(300, 250, NULL, NULL);
-	midy = get_xy(250, 250, endy, NULL);
-	starty = get_xy(200, 250, midy, NULL);
-	end = get_xy(300, 200, NULL, endy);
-	mid = get_xy(250, 200, end, midy);
-	start = get_xy(200, 200, mid, starty);
-	prog.net_2d = start;
-	*/
 	if (argc != 2)
 	{
 		ft_printf("Usage: ./fdf file_path\n");
 		return (0);
 	}
-	if (load_map(&prog, argv[1]) == -1)
-		return 0;
-	prog.mlx = mlx_init(700, 700, "bcanals- fdf", true);
-	prog.img = mlx_new_image(prog.mlx, 700, 700);
-	prog.update = true;
-	mlx_image_to_window(prog.mlx, prog.img, 0,0);
-	// ft_printf("address in main: %p\n", all);
+	prog.net = NULL;
+	l = load_map(&prog, argv[1]);
+	if (!l)
+		return (points_clean_up(prog.net));
+	normalize_proj(prog.net, l);
+	prog.mlx = mlx_init(l->max_x - l->min_x + 20, l->max_y - l->min_y + 20,
+			"bcanals- fdf", true);
+	prog.img = mlx_new_image(prog.mlx, l->max_x - l->min_x + 20,
+			l->max_y - l->min_y + 20);
+	draw_map(prog.img, prog.net);
+	mlx_image_to_window(prog.mlx, prog.img, 0, 0);
 	mlx_key_hook(prog.mlx, hook, &prog);
-	mlx_loop_hook(prog.mlx, *render_next_frame, &prog);
 	mlx_loop(prog.mlx);
+	points_clean_up(prog.net);
+	free(l);
+	mlx_delete_image(prog.mlx, prog.img);
 	mlx_terminate(prog.mlx);
 }
