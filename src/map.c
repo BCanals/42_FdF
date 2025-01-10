@@ -6,7 +6,7 @@
 /*   By: bizcru <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 17:48:25 by bizcru            #+#    #+#             */
-/*   Updated: 2025/01/09 21:29:27 by bizcru           ###   ########.fr       */
+/*   Updated: 2025/01/10 11:00:07 by bcanals-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,24 +60,32 @@ static int	split_count(char **split)
 	return (i);
 }
 
-static int do_load(t_prog *prog, fd)
+static void	do_load(t_prog *prog, fd)
 {
 	char	*line;
 	char	**split;
-	int		i;
+	t_xyz	*prev_x;
+	t_xyz	*prev_y;
+	int		x;
+	int		y;
 	
-	line = get_next_line(fd);
-	split = ft_split(line);
-	rsize = split_count;
-	free(line);
-	free(split);
+	x = 0;
+	y = 0;
 	line = get_next_line(fd);
 	while (line)
 	{
+		prev_x = NULL;
 		split = ft_split(line);
-		while (split
+		while (split[++x]);
+		while (--x >= 0)
+			prev_x = get_xyz(x, y, ft_atoi(split[x]), prev_x);
+		if (!prog->net_3d)
+			prog->net_3d = prev_x;
+		else
+			prev_y->n_y = prev_x;
+		prev_y = prev_x;
+		line = get_next_line(fd);
 	}
-	while 
 }
 
 static int check_file(fd)
@@ -89,10 +97,7 @@ static int check_file(fd)
 
 	line = get_next_line(fd);
 	if (!line)
-	{
-		ft_putstr_fd("file is empty or couldn't be read\n", 2);
 		return (-1);
-	}
 	while (line)
 	{
 		split = ft_split(line);
@@ -122,7 +127,13 @@ int load_map(t_prog *prog, char *path)
 	}
 	if (check_file(prog, fd) == -1)
 		return (-1);
-
+	close(fd);
+	if (fd == -1)
+	{
+		perror("error opening the file");
+		return (-1);
+	}
+	do_load(prog, fd);
+	link_y(prog
 	return (0);
 }
-
