@@ -6,7 +6,7 @@
 /*   By: bcanals- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 18:05:01 by bcanals-          #+#    #+#             */
-/*   Updated: 2025/01/10 17:35:06 by bcanals-         ###   ########.fr       */
+/*   Updated: 2025/01/10 20:57:32 by bcanals-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,12 @@ static void	draw_map(mlx_image_t *img, t_xyz *p)
 		p = ini_y;
 	}
 }
+
+/* TO-DO:
+	-escale the image size to the screen, or a kind of trade-off
+	-check for the downstrem error handling of malloc misbehaving
+	-protect for empty files
+*/
 
 int	main(int argc, char **argv)
 {
